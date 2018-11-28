@@ -1,0 +1,64 @@
+%{
+ open Absyn
+ open ParAux
+%}
+
+%token <int> CSTINT      
+%token <string> NAME
+%token <bool> CSTBOOL
+
+/*      Unit  Bool  Int  List  Tuple  ->     */
+%token  UNIT  BOOL  INT  LIST  TUPLE  ARROW 
+
+/*      =>      fn  end  */
+%token  DARROW  FN  END      
+
+/*      var  fun  rec  */
+%token  VAR  FUN  REC
+
+/*      if  then  else  */
+%token  IF  THEN  ELSE 
+
+/*      !    &&   */
+%token  NOT  AND
+
+/*      ::    hd    tl    ise  */
+%token  CONS  HEAD  TAIL  ISE                   
+
+/*      print  */
+%token  PRINT
+
+/*      +     -      *      /     */
+%token  PLUS  MINUS  TIMES  DIV
+
+/*      =   !=   <   <=   */
+%token  EQ  NEQ  LT  LTE
+
+/*      (     )     {       }       [       ]       */
+%token  LPAR  RPAR  LBRACE  RBRACE  LBRACK  RBRACK
+
+/*      #     ,      :      ;      */
+%token  HASH  COMMA  COLON  SEMIC
+
+%token EOF
+
+
+%right SEMIC ARROW
+%nonassoc IF
+%left ELSE              
+%left EQ NEQ
+%left LT LTE
+%right CONS
+%left PLUS MINUS
+%left TIMES DIV AND
+%nonassoc NOT HEAD TAIL ISE PRINT NAME
+%left HASH          
+
+%start Main
+%type <Absyn.expr> Main 
+
+%%
+
+/*  Add production rules below */
+
+

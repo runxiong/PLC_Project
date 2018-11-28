@@ -1,0 +1,12 @@
+To do list:
+1. 	PlcParser
+	Complete the specification in PlcParser.fsy
+
+2.  Lexer
+	Write a Lexer.fsl file
+
+3.  PlcChecker
+	Implement teval in PlcChecker.fs
+
+4.  PlcInterp
+	Implement eval in PlcInterp.fs
