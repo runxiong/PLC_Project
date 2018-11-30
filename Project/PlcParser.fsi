@@ -97,9 +97,10 @@ type nonTerminalId =
     | NONTERM_Main
     | NONTERM_Prog
     | NONTERM_Decl
+    | NONTERM_ArgList
     | NONTERM_Expr
-    | NONTERM_Lcomps
     | NONTERM_AtomicExpr
+    | NONTERM_Lcomps
     | NONTERM_AppExpr
     | NONTERM_Const
     | NONTERM_Comps

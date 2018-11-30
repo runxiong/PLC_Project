@@ -1,6 +1,7 @@
 open Parse
 open Parse
 open Parse
+open Parse
 (* 
   Make sure you regenerate the Parser and Lexer
   every time you modify PlcLexer.fsl or PlcParser.fsy
@@ -40,29 +41,17 @@ let run e = printfn "\nResult is  %s\n" (Plc.run e)   // execution function
 
 (* Examples in concrete syntax *)
 let e1 = fromString " 15 "
-
 let e2 = fromString " true  "
-
 let e3 = fromString " () "
-
 let e4 = fromString " (6, false) "
-
 let e5 = fromString " (6, false)#1 "
-
 let e6 = fromString "([]:List[Bool])"
-
 let e7 = fromString " print x; true "
-
 let e8 = fromString " 3::7::t "
-
 let e9 = fromString "fn (x:Int) => -x end"
-
 let e10 = fromString "var x = 9; x + 1"
-
-let e11 = fromString "fun f(x:Int) = x; f(1)"
-
+let e11 = fromString "fun f(x:Int, y:Int, z:Int) = x + y + z; f(1, 2, 3)"
 let e12 = fromString "fun rec f(n:Int) : Int = if n <= 0 then 0 else n + f(n-1) ; f(5)"
-
 let e13 = fromString
 "fun inc (x : Int) = x + 1;
 fun add (x : Int, y : Int) = x + y;
@@ -74,9 +63,7 @@ fun rec fact (n : Int) : Int =
   if n = 0 then 1 else n * fact(n - 1);
 print x; print y;
 x :: y :: z :: fact(z) :: ([] : List[Int]) "
-
 let e14 = fromString "x :: y :: z :: fact(z) :: ([] : List[Int])"
-
 let e15 = fromString 
 "var E = ([] : List[Int]);
 fun reverse (l : List[Int]) = {
@@ -89,7 +76,6 @@ l2 else {
 }; rev(l, E)
 };
 reverse (1::2::3::E)"
-
 let e16 = fromString
 "fun twice (f : Int -> Int) = fn (x : Int) => f(f(x)) end ;
 fun rec map (f : Int -> Int) : (List[Int] -> List[Int]) =
@@ -102,11 +88,31 @@ var E = ([] : List[Int]) ;
 var l1 = map (fn (x:Int) => 2*x end) (10::20::30::E) ;
 var l2 = map (twice(inc)) (l1) ;
 (l1, l2)"
+let e16a = fromString "fun rec move (l1 : List[Int])  : List[Int] = hd(l1); move(l)"
 
-// Extra Creidt I
+// Extra Credit I
 let e17a = fromString "[e1]"
 let e17b = fromString "e1 :: ([] : List[Int])"
 let e18a = fromString "[e1; e2]"
 let e18b = fromString "e1 :: e2 :: ([] : List[Int])"
 let e19a = fromString "[e1; e2; e3]"
 let e19b = fromString "e1 :: e2 :: e3 :: ([] : List[Int])"
+let e20 = fromString " [[e1]; [e2]] "
+
+// Extra Credit II
+let e21 = fromString "fn (x:Int) (y : Int) (z : Int) => x + y + z end " 
+let e22 = fromString " fun rec f (x:Int) : Int = if x=0 then 0 else 1 + f(x-1); f(5)"
+let e23 = fromString "var highAdd = fn (x:Int) (y:Int) => x + y end ; 8"
+let e24 = fromString " fun leq (x:Int) (y:Int) = x <= y ; 8"
+let e25 = fromString " 1 - 3; {var x = 4; 2 * x} "
+let e26 = fromString "var highAdd = fn (x:Int) => fn (y:Int) => x + y end ; 8"
+
+printf "5.5"
+
+// let rec f x = fun y -> if x > 0 then f (x-1) (y-1) + y else y
+
+// let rec f = fun x -> fun y -> if x > 0 then 1+ f (x-1) (y-1) else y
+
+let rec f = fun x -> if x=0 then 0 else 1 + f(x-1)
+
+f 5

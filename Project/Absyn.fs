@@ -33,6 +33,10 @@ type plcVal =
   | TupV of plcVal list
   | Clos of string * string * expr * plcVal env 
 
+type dec =
+  | A of string * expr 
+  | B of string * ((string * plcType) list) list * expr
+  | C of string * (string * plcType) list * plcType *  expr
 
 let list2string conv sep l =
   let conc s t = s + sep + conv t in
@@ -60,8 +64,3 @@ let rec val2string v =
   | LisV vs -> "[" + list2string val2string "; " vs + "]"
   | TupV vs -> "(" + list2string val2string ", " vs + ")" 
   | Clos _ -> "<fun>" 
-
-
-fst (1, 2)
-snd (1, 2)
-(1, 2, 3)

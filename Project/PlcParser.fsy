@@ -71,9 +71,14 @@ Prog:
 ;
 
 Decl:
-    VAR NAME EQ Expr                        { (1, ($2, [("string", BooT)], BooT, $4))  }
-  | FUN NAME Args EQ Expr                   { (2, ($2, $3, BooT, $5))                  }
-  | FUN REC NAME Args COLON Type EQ Expr    { (3, ($3, $4, $6, $8))                    }
+    VAR NAME EQ Expr                        { A ($2, $4)         }
+  | FUN NAME ArgList EQ Expr                { B ($2, $3, $5)     }
+  | FUN REC NAME Args COLON Type EQ Expr    { C ($3, $4, $6, $8) }
+;
+
+ArgList:
+    Args         { $1 :: [] }
+  | Args ArgList { $1 :: $2 }
 ;
 
 Expr:
@@ -100,13 +105,13 @@ Expr:
   | Expr HASH  CSTINT             { Prim2 ("#", $1, ConI $3) }
 
 AtomicExpr:
-    Const                           { $1             }
-  | NAME                            { Var $1         }
-  | LBRACE Prog RBRACE              { $2             }
-  | LPAR Expr RPAR                  { $2             }
-  | LPAR Comps RPAR                 { Tuple $2       }
-  | FN Args DARROW Expr END         { makeAnon $2 $4 }
-  | LBRACK Lcomps RBRACK            { $2             }
+    Const                           { $1                    }
+  | NAME                            { Var $1                }
+  | LBRACE Prog RBRACE              { $2                    }
+  | LPAR Expr RPAR                  { $2                    }
+  | LPAR Comps RPAR                 { Tuple $2              }
+  | FN ArgList DARROW Expr END      { makeAnonCurried $2 $4 }
+  | LBRACK Lcomps RBRACK            { $2                    }
 ;
 
 /*   Extra Credit I    */
