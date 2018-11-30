@@ -16,17 +16,26 @@ let commentDepth = ref 0;  (* Current comment nesting *)
 
 let keyword s =
     match s with
-    | "else"  -> ELSE 
-    | "false" -> CSTBOOL false
-    | "if"    -> IF
-    | "then"  -> THEN
-    | "var"  -> VAR
-    | "fun"  -> FUN
-    | "true"  -> CSTBOOL true
-    | "Int"  -> INT
-    | "Bool"  -> BOOL
-    | "Unit"  -> UNIT
-    | _       -> NAME s
+     | "Bool"  ->  BOOL
+     | "else"  ->  ELSE
+     | "end"   ->  END
+     | "false" ->  CSTBOOL false
+     | "fn"    ->  FN
+     | "fun"   ->  FUN
+     | "hd"    ->  HEAD
+     | "if"    ->  IF
+     | "Int"   ->  INT
+     | "ise"   ->  ISE
+     | "List"  ->  LIST
+     | "print" ->  PRINT
+     | "rec"   ->  REC
+     | "then"  ->  THEN
+     | "tl"    ->  TAIL
+     | "true"  ->  CSTBOOL true
+     | "Tuple" ->  TUPLE
+     | "Unit"  ->  UNIT
+     | "var"   ->  VAR
+     | _       ->  NAME s
 }
 
 rule Token = parse
@@ -38,23 +47,30 @@ rule Token = parse
   | "(*"            { commentStart := lexbuf.StartPos;
                       commentDepth := 1; 
                       SkipComment lexbuf; Token lexbuf }
-  | '='             { EQ }
-  | "<>"            { NE }
-  | '!'             { NOT }
-  | '<'             { LT }
-  | '+'             { PLUS }                     
-  | '-'             { MINUS }                     
-  | '*'             { TIMES }                     
-  | '/'             { DIV }                     
-  | '('             { LPAR }
-  | ')'             { RPAR }
-  | '{'             { LBRA }
-  | '}'             { RBRA }
-  | ';'             { SEMIC }
-  | ','             { COMMA }
-  | '#'             { HASH }
-  | ':'             { COLON }
-  | eof             { EOF }
+  | '='             { EQ      }
+  | "!="            { NEQ     }
+  | '!'             { NOT     }
+  | '<'             { LT      }
+  | "<="            { LTE     }
+  | '+'             { PLUS    }                     
+  | '-'             { MINUS   }                     
+  | '*'             { TIMES   }                     
+  | '/'             { DIV     }                     
+  | '('             { LPAR    }
+  | ')'             { RPAR    }
+  | '['             { LBRACK  }
+  | ']'             { RBRACK  }
+  | '{'             { LBRACE  }
+  | '}'             { RBRACE  }
+  | ';'             { SEMIC   }
+  | ','             { COMMA   }
+  | '#'             { HASH    }
+  | ':'             { COLON   }
+  | "::"            { CONS    }
+  | "&&"            { AND     }
+  | "=>"            { DARROW  }
+  | "->"            { ARROW   }
+  | eof             { EOF     }
   | _               { failwith "Lexer error: illegal symbol" }
 
 and SkipComment = parse

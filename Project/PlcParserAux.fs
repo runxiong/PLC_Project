@@ -26,4 +26,15 @@ let makeAnon (xs: (string * plcType) list) (e: expr) : expr =
   | _            -> 
    let t = makeType xs in
    let e' = makeFunAux 1 xs e in
-   Anon (tup, t, e') 
+   Anon (tup, t, e')
+
+let make1 t b = let t1, t2, t3, t4 = t in Let (t1, t4, b)
+let make2 t b = let t1, t2, t3, t4 = t in Let (t1, makeAnon t2 t4, b)
+let make3 t b = let t1, t2, t3, t4 = t in makeFun t1 t2 t3 t4 b 
+let makeExpr (a : int * (string * (string * plcType) list * plcType * expr)) (b : expr) : expr =
+  match a  with
+   | (1, t) -> make1 t b
+   | (2, t) -> make2 t b
+   | (3, t) -> make3 t b
+
+

@@ -60,3 +60,8 @@ let rec val2string v =
   | LisV vs -> "[" + list2string val2string "; " vs + "]"
   | TupV vs -> "(" + list2string val2string ", " vs + ")" 
   | Clos _ -> "<fun>" 
+
+
+fst (1, 2)
+snd (1, 2)
+(1, 2, 3)
