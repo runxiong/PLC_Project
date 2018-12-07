@@ -10,15 +10,16 @@ let rec eval (e : expr) (env : plcVal env) : plcVal =
     | ConI i -> IntV i
     | ConB b -> BooV b
 
-    | Var x  ->
-      let v = lookup env x in
+    | Var x  -> lookup env x
+      (*let v = lookup env x in
       match v with
       | IntV  _ -> v
       | BooV _ -> v 
       | TupV  _ -> v 
-      | _      -> failwith ("Value of variable _" + x + "_ is not first-order.")
+      | LisV _ -> v
+      | _      -> failwith ("Value of variable _" + x + "_ is not first-order.")*)
 
-    | EList _ -> TupV []
+    | EList _ -> LisV []
     
     | Prim1 (op, e1) -> 
       let v1 = eval e1 env in
@@ -66,15 +67,27 @@ let rec eval (e : expr) (env : plcVal env) : plcVal =
       let env2 = (name, Clos(name, var, ex1, env)) :: env in
       eval ex2 env2
 
-    | Call (Var f, e) -> 
-      let c = lookup env f in
-      match c with
-      | Clos (f, x, e1, fenv) ->
-        let v = eval e env in
-        let env1 = (x, v) :: (f, c) :: fenv in
-        eval e1 env1
-      | _ -> failwith "eval Call: not a function"
-    | Call _ -> failwith "eval Call: not first-order function"
+    | Call (n, e) ->
+        match n with 
+        | Var f ->
+          let c = lookup env f in
+          match c with
+            | Clos (f, x, e1, fenv) ->
+              let v = eval e env in
+              let env1 = (x, v) :: (f, c) :: fenv in
+              eval e1 env1
+            | _ -> failwith ("eval Call: expected a function but got " + val2string c)
+        | Call _ ->
+          let c = eval n env in
+          match c with
+            | Clos (f, x, e1, fenv) ->
+              let v = eval e env in 
+              let env1 = (x, v) :: (f, c) :: fenv in
+              eval e1 env1
+            | _ -> failwith ("eval Call: expected a function but got " + val2string c)
+        | _ -> failwith ("eval Call: invalid argument")
+
+    // | Call _ -> failwith "eval Call: not first-order function"
 
     | Tuple es -> TupV (List.map (fun e -> eval e env) es)
 

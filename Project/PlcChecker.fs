@@ -92,16 +92,29 @@ let rec teval (e : expr) (env : plcType env) : plcType =
       else
         failwith ("Checker: wrong return type in function " + f)*)
  
-    | Call (Var f, e) -> 
-      match lookup env f with
-      | FunT (xt, rt) ->
-        if teval e env = xt then 
-          rt
-        else
-          failwith "Checker: type mismatch in function call"
-      | _ -> failwith ("Checker: function " + f + "is undefined")
+    | Call (n, e) ->
+      match n with
+      | Var f -> 
+        match lookup env f with
+        | FunT (xt, rt) ->
+          if teval e env = xt then 
+            rt
+          else
+            failwith "Checker: type mismatch in function call"
+        | _ -> failwith ("Checker: function " + f + "is undefined")
+      | Call _ ->
+        let c = teval n env in
+        match c with 
+        | FunT (xt, rt) ->
+          if teval e env = xt then
+            rt
+          else
+            failwith "Checker: type mismatch in funciton call"
+        | _ -> failwith ("Checker: Expected function but got " + type2string c)
+
+      | _ -> failwith "Call: illegal function in call"
  
-    | Call _ -> failwith "Call: illegal function in call"
+    //| Call _ -> failwith "Call: illegal function in call"
 
     | Tuple es -> TupT (List.map (fun e -> teval e env) es)
 
