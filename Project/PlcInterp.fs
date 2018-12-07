@@ -26,7 +26,7 @@ let rec eval (e : expr) (env : plcVal env) : plcVal =
       | ("-", IntV i) -> IntV (- i)
       | ("!", BooV b) -> BooV (not b)
       | ("hd", LisV a) -> a.Head
-      | ("tl", LisV a) -> (List.rev a).Head
+      | ("tl", LisV a) -> LisV a.Tail
       | ("print", _) -> printfn "%s" (val2string v1); TupV []
       | ("ise", LisV a) -> BooV (a.IsEmpty)
       | _   -> failwith "Impossible"
@@ -60,19 +60,21 @@ let rec eval (e : expr) (env : plcVal env) : plcVal =
       | BooV false -> eval e3 env
       | _ -> failwith "Impossible"
 
-    (*| Letfun (f, x, _, e1, _, e2) -> 
-      let env2 = (f, Closure(f, x, e1, env)) :: env in
-      eval e2 env2*)
+    | Anon (f, _, e1) -> Clos("", f, e1, env)
 
-    (*| Call (Var f, e) -> 
+    | Letrec (name, var, vartype, ex1, rettype, ex2) -> 
+      let env2 = (name, Clos(name, var, ex1, env)) :: env in
+      eval ex2 env2
+
+    | Call (Var f, e) -> 
       let c = lookup env f in
       match c with
-      | Closure (f, x, e1, fenv) ->
+      | Clos (f, x, e1, fenv) ->
         let v = eval e env in
         let env1 = (x, v) :: (f, c) :: fenv in
         eval e1 env1
       | _ -> failwith "eval Call: not a function"
-    | Call _ -> failwith "eval Call: not first-order function"*)
+    | Call _ -> failwith "eval Call: not first-order function"
 
     | Tuple es -> TupV (List.map (fun e -> eval e env) es)
 

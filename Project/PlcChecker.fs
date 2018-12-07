@@ -66,6 +66,23 @@ let rec teval (e : expr) (env : plcType env) : plcType =
 
       | _    -> failwith "Checker: 'if':' condition not Boolean"
  
+    | Anon (f, t, e1) -> 
+        let fenv = (f, t) :: env in
+        let rettype = (teval e1 fenv) in
+        FunT(t, rettype)
+
+    | Letrec (name, var, vartype, ex1, rettype, ex2) -> 
+      (*let vart = FunT (vartype, rettype) in
+      let fenv = (var, vartype) :: (name, rettype) :: env in
+      let lenv = (name, rettype) :: env in
+      if teval ex1 fenv = vartype then 
+        if teval ex2 lenv = rettype then
+            FunT(vartype, rettype)
+        else
+          failwith ("Checker: wrong return type in function " + name)
+      else
+        failwith ("Checker: wrong return type in function " + name)*) FunT(vartype, rettype)
+    
     (*| Letfun (f, x, xt, e1, rt, e2) -> 
       let ft = FunT (xt, rt) in
       let fenv = (x, xt) :: (f, ft) :: env in
@@ -88,7 +105,7 @@ let rec teval (e : expr) (env : plcType env) : plcType =
 
     | Tuple es -> TupT (List.map (fun e -> teval e env) es)
 
-    | Sel (e1, n) -> // copied from hw6, need test
+    | Sel (e1, n) -> 
       match teval e1 env with 
       | TupT ts -> 
         if 0 < n && n <= List.length ts then
