@@ -72,16 +72,16 @@ let rec teval (e : expr) (env : plcType env) : plcType =
         FunT(t, rettype)
 
     | Letrec (name, var, vartype, ex1, rettype, ex2) -> 
-      (*let vart = FunT (vartype, rettype) in
-      let fenv = (var, vartype) :: (name, rettype) :: env in
-      let lenv = (name, rettype) :: env in
+      let vart = FunT (vartype, rettype) in
+      let fenv = (var, vartype) :: (name, vart) :: env in
+      let lenv = (name, vart) :: env in
       if teval ex1 fenv = vartype then 
         if teval ex2 lenv = rettype then
             FunT(vartype, rettype)
         else
           failwith ("Checker: wrong return type in function " + name)
       else
-        failwith ("Checker: wrong return type in function " + name)*) FunT(vartype, rettype)
+        failwith ("Checker: wrong return type in function " + name) // FunT(vartype, rettype)
     
     (*| Letfun (f, x, xt, e1, rt, e2) -> 
       let ft = FunT (xt, rt) in
@@ -90,7 +90,7 @@ let rec teval (e : expr) (env : plcType env) : plcType =
       if teval e1 fenv = rt then 
         teval e2 lenv
       else
-        failwith ("Checker: wrong return type in function " + f)*)
+        failwith ("Checker: wrong return type in function " + f) *)
  
     | Call (n, e) ->
       match n with
@@ -101,7 +101,7 @@ let rec teval (e : expr) (env : plcType env) : plcType =
             rt
           else
             failwith "Checker: type mismatch in function call"
-        | _ -> failwith ("Checker: function " + f + "is undefined")
+        | _ -> failwith ("Checker: function " + f + " is undefined")
       | Call _ ->
         let c = teval n env in
         match c with 
