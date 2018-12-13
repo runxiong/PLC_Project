@@ -24,7 +24,7 @@ let rec teval (e : expr) (env : plcType env) : plcType =
       | ("-", IntT) -> IntT
       | ("!", BooT) -> BooT
       | ("hd", LisT a) -> a
-      | ("tl", LisT a) -> a
+      | ("tl", LisT a) -> LisT a
       | ("print", _) -> TupT []
       | ("ise", LisT _) -> BooT
       | _   -> failwith "Checker: unknown op, or type error"
@@ -75,11 +75,12 @@ let rec teval (e : expr) (env : plcType env) : plcType =
       let vart = FunT (vartype, rettype) in
       let fenv = (var, vartype) :: (name, vart) :: env in
       let lenv = (name, vart) :: env in
-      if teval ex1 fenv = vartype then 
-        if teval ex2 lenv = rettype then
-            FunT(vartype, rettype)
-        else
-          failwith ("Checker: wrong return type in function " + name)
+      if teval ex1 fenv = rettype then
+        teval ex2 lenv
+        // if teval ex2 lenv = rettype then
+        //     FunT(vartype, rettype)
+        // else
+        //   failwith ("Checker: wrong return type in function " + name)
       else
         failwith ("Checker: wrong return type in function " + name) // FunT(vartype, rettype)
     
@@ -100,7 +101,7 @@ let rec teval (e : expr) (env : plcType env) : plcType =
           if teval e env = xt then 
             rt
           else
-            failwith "Checker: type mismatch in function call"
+            failwith "Checker: type mismatch in function call.."
         | _ -> failwith ("Checker: function " + f + " is undefined")
       | Call _ ->
         let c = teval n env in

@@ -9,6 +9,7 @@ type plcType =
   | TupT of plcType list                (*  Unit
                                             Tuple[type, ..., type]  *)
   | LisT of plcType                     (*  List[type]              *)
+  | Hold
 
 type expr = 
   | ConI of int
@@ -36,7 +37,7 @@ type plcVal =
 type dec =
   | A of string * expr 
   | B of string * ((string * plcType) list) list * expr
-  | C of string * (string * plcType) list * plcType *  expr
+  | C of string * ((string * plcType) list) list * plcType *  expr
 
 let list2string conv sep l =
   let conc s t = s + sep + conv t in
