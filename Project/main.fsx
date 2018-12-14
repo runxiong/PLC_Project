@@ -74,9 +74,9 @@ run e7
 interp e7 []
 typecheck e7 []
 
-let e8e = fromString  " 3; 2; 4; fact(x); e1; e2; e3 "
+let e8e = fromString  " (3, 4) "
 
-let e8a = fromString " 3 :: 6 :: 7 :: ([]:List[Int] ) "
+let e8a = fromString " [3 ; 6 ; 7 ; 8] "
 run e8a
 interp e8a []
 typecheck e8a []
@@ -122,8 +122,6 @@ let e12 = fromString "fun rec f(n:Int) : Int = if n <= 0 then 0 else n + f(n-1) 
 run e12
 interp e12 []
 typecheck e12 []
-
-
 let e13 = fromString "fun inc (x : Int) = x + 1;
 fun add (x : Int, y : Int) = x + y;
 fun highAdd (x : Int) = fn (y : Int) => x + y end;
@@ -138,11 +136,20 @@ x :: y :: z :: fact(z) :: ([] : List[Int]) "
 run e13
 interp e13 []
 typecheck e13 []
+let e13a = fromString "fun inc (x : Int) = x + 1;
+fun add (x : Int, y : Int) = x + y;
+fun highAdd (x : Int) = fn (y : Int) => x + y end;
+var y = add(3, inc(4));
+var x = highAdd(3)(7-y);
+var z = x * 3;
+fun rec fact (n : Int) : Int =
+  if n = 0 then 1 else n * fact(n - 1);
+print x; print y;
+[x; y; z; fact(z)]"
 
-let e14 = fromString "x :: y :: z :: fact(z) :: ([] : List[Int])"
-let e14a = fromString "[x; y; z; fact(z)]"
-
-
+run e13a
+interp e13a []
+typecheck e13a []
 let e15 = fromString "var E = ([] : List[Int]);
 fun reverse (l : List[Int]) = {
   fun rec rev (l1 : List[Int], l2 : List[Int]): List[Int] =
@@ -157,6 +164,7 @@ reverse (1::2::3::E)"
 run e15
 interp e15 []
 typecheck e15 []
+
 let e16 = fromString "fun twice (f : Int -> Int) = fn (x : Int) => f(f(x)) end ;
 fun rec map (f : Int -> Int) : (List[Int] -> List[Int]) =
   fn (l: List[Int]) =>
@@ -172,32 +180,20 @@ run e16
 interp e16 []
 typecheck e16 []
 
+let e17 = fromString " fun pairAdd (x1 : Int, x2 : Int) (y1 : Int, y2 : Int) = (x1 + y1, x2 + y2); pairAdd (1, 2) (3, 4)"
+run e17
+interp e17 []
+typecheck e17 []
 
-let e16a = fromString "fun rec move (l1 : List[Int])  : List[Int] = hd(l1); move(l)"
+let e17a = fromString " fun pairAdd (x1 : Int, x2 : Int) (y1 : Int, y2 : Int) = (x1 + y1, x2 + y2); [ pairAdd (1, 2) (3, 4) ; pairAdd (1, 2) (3, 4) ]"
+run e17a
+interp e17a []
+typecheck e17a []
 
-// Extra Credit I
-let e17a = fromString "[3+3]"
-let e17b = fromString "e1 :: ([] : List[Int])"
-let e18a = fromString "[e1; e2]"
-let e18b = fromString "e1 :: e2 :: ([] : List[Int])"
-let e19a = fromString "[e1; e2; e3]"
-let e19b = fromString "[ e1 :: e2 :: e3 :: ([] : List[Int]) ]"
-let e20 = fromString " [[e1]; [e2]] "
-
-// Extra Credit II
-let e21 = fromString "fn (x:Int) (y : Int) (z : Int) => x + y + z end " 
-let e22 = fromString " fun rec f (x:Int) : Int = if x=0 then 0 else 1 + f(x-1); f(5)"
-let e23 = fromString "var highAdd = fn (x:Int) (y:Int) => x + y end ; highAdd 7 8"
-run e23
-let e24 = fromString " fun leq (x:Int) (y:Int) = x <= y ; 8"
-let e25 = fromString " 1 - 3; {var x = 4; 2 * x} "
-let e26 = fromString "var highAdd = fn (x:Int) => fn (y:Int) => x + y end end; 8"
-
-printf "5.5"
-
-// let rec f x = fun y -> if x > 0 then f (x-1) (y-1) + y else y
-
-// let rec f = fun x -> fun y -> if x > 0 then 1+ f (x-1) (y-1) else y
+let e18 = fromString " fun rec pairAdd1 (x1 : Int, x2 : Int) (y1 : Int, y2 : Int) : Tuple [Int, Int] = (x1 + y1, x2 + y2);  pairAdd1 (1, 2) (3, 4) "
+run e18
+interp e18 []
+typecheck e18 []
 
 let rec map f l = 
   match l with
