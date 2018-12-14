@@ -49,6 +49,7 @@ let rec type2string t =
   match t with
   | BooT -> "Bool"
   | IntT -> "Int"
+  | Hold -> "Hold"
   | TupT [] -> "Unit"
   | TupT ts -> "Tuple[" + list2string type2string ", " ts + "]" 
   | LisT t1 -> "List[" + type2string t1 + "]"

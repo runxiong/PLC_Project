@@ -46,7 +46,10 @@ let rec teval (e : expr) (env : plcType env) : plcType =
       | ("!=", BooT, BooT) -> BooT                      
       | ("!=", IntT, IntT) -> BooT                      
       | ("!=", TupT [], TupT []) -> BooT
-      | ("::", t1, LisT t2) when t1 = t2 -> LisT t1
+      | ("::", t1, LisT t2) -> if t2 = t1 then LisT t2 else
+                                            match t2 with
+                                            | Hold -> LisT t1
+                                            | _ -> failwith ("Checker: type error in list operator :: with types " + type2string t1 + " and " + type2string t2)
       | (";", _, _) -> t2
       | _   -> failwith "Checker: unknown op, or type error"
 
@@ -76,8 +79,8 @@ let rec teval (e : expr) (env : plcType env) : plcType =
       let fenv = (var, vartype) :: (name, vart) :: env in
       let lenv = (name, vart) :: env in
       let e1type = teval ex1 fenv in
+      if e1type = rettype then teval ex2 lenv else 
       match e1type with
-      | rettype -> teval ex2 lenv
       | FunT(a, b) -> if b = rettype then teval ex2 lenv 
                                      else failwith ("Checker: Incorrect return type from FunT in function " + name)
       | _ -> failwith ("Checker: wrong return type in function " + name)
