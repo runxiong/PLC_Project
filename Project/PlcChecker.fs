@@ -75,14 +75,17 @@ let rec teval (e : expr) (env : plcType env) : plcType =
       let vart = FunT (vartype, rettype) in
       let fenv = (var, vartype) :: (name, vart) :: env in
       let lenv = (name, vart) :: env in
-      if teval ex1 fenv = rettype then
-        teval ex2 lenv
+      let e1type = teval ex1 fenv in
+      match e1type with
+      | rettype -> teval ex2 lenv
+      | FunT(a, b) -> if b = rettype then teval ex2 lenv 
+                                     else failwith ("Checker: Incorrect return type from FunT in function " + name)
+      | _ -> failwith ("Checker: wrong return type in function " + name)
         // if teval ex2 lenv = rettype then
         //     FunT(vartype, rettype)
         // else
         //   failwith ("Checker: wrong return type in function " + name)
-      else
-        failwith ("Checker: wrong return type in function " + name) // FunT(vartype, rettype)
+         // FunT(vartype, rettype)
     
     (*| Letfun (f, x, xt, e1, rt, e2) -> 
       let ft = FunT (xt, rt) in
@@ -111,7 +114,7 @@ let rec teval (e : expr) (env : plcType env) : plcType =
             rt
           else
             failwith "Checker: type mismatch in funciton call"
-        | _ -> failwith ("Checker: Expected function but got " + type2string c)
+        | _ -> c // failwith ("Checker: Expected function but got " + type2string c)
 
       | _ -> failwith "Call: illegal function in call"
  
